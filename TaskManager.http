@@ -1,0 +1,6 @@
+@TaskManager_HostAddress = https://localhost:44381
+
+
+GET {{TaskManager_HostAddress}}/api/task/?onlyExpired=true
+
+###
