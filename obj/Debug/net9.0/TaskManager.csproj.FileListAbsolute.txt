@@ -165,3 +165,5 @@ C:\Users\callm\source\repos\TaskManager\obj\Debug\net9.0\TaskManager.sourcelink.
 C:\Users\callm\source\repos\TaskManager\bin\Debug\net9.0\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\callm\source\repos\TaskManager\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\callm\source\repos\TaskManager\bin\Debug\net9.0\Swashbuckle.AspNetCore.SwaggerUI.dll
+C:\Users\callm\source\repos\TaskManager\bin\Debug\net9.0\TaskManager.xml
+C:\Users\callm\source\repos\TaskManager\obj\Debug\net9.0\TaskManager.xml

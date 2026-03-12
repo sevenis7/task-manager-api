@@ -16,7 +16,11 @@ namespace TaskManager.Controllers
             _apiService = apiService;
         }
 
-
+        /// <summary>
+        /// Получить данные по ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {

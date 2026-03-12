@@ -1,8 +1,9 @@
 {
   "openapi": "3.0.4",
   "info": {
-    "title": "TaskManager",
-    "version": "1.0"
+    "title": "Task Manager API",
+    "description": "API для управления задач с JWT авторизацией",
+    "version": "v1"
   },
   "paths": {
     "/api/Category/{id}": {
@@ -10,10 +11,12 @@
         "tags": [
           "Category"
         ],
+        "summary": "Получить данные по ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
@@ -33,10 +36,12 @@
         "tags": [
           "Priority"
         ],
+        "summary": "Получить данные по ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
@@ -56,10 +61,12 @@
         "tags": [
           "Status"
         ],
+        "summary": "Получить данные по ID",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "",
             "required": true,
             "schema": {
               "type": "integer",
@@ -79,10 +86,12 @@
         "tags": [
           "Task"
         ],
+        "summary": "Метод получения задач",
         "parameters": [
           {
             "name": "includeExpired",
             "in": "query",
+            "description": "Параметр, включающий истекшие задачи по сроку истечения. По умолчанию false.",
             "schema": {
               "type": "boolean",
               "default": false
@@ -91,6 +100,7 @@
           {
             "name": "onlyExpired",
             "in": "query",
+            "description": "Параметр, включающий ТОЛЬКО истекшие задачи по сроку истечения. По умолчанию false",
             "schema": {
               "type": "boolean",
               "default": false
@@ -99,6 +109,7 @@
           {
             "name": "categoryId",
             "in": "query",
+            "description": "ID параметр выбранной категории. Без указания будут получены задачи всех категорий.",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -107,6 +118,7 @@
           {
             "name": "statusId",
             "in": "query",
+            "description": "ID параметр выбранного статуса. Без указания будут получени задачи со всеми статусами",
             "schema": {
               "type": "integer",
               "format": "int32"
@@ -123,7 +135,9 @@
         "tags": [
           "Task"
         ],
+        "summary": "Метод создания задачи",
         "requestBody": {
+          "description": "Модель задачи CreateTaskModel, принимаемая из тела запроса",
           "content": {
             "application/json": {
               "schema": {
@@ -154,10 +168,12 @@
         "tags": [
           "Task"
         ],
+        "summary": "Метод получения задачи",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID задачи",
             "required": true,
             "schema": {
               "type": "integer",
@@ -175,10 +191,12 @@
         "tags": [
           "Task"
         ],
+        "summary": "Метод изменения задачи",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID изменяемой задачи",
             "required": true,
             "schema": {
               "type": "integer",
@@ -187,6 +205,7 @@
           }
         ],
         "requestBody": {
+          "description": "Модель задачи UpdateTaskModel, принимаемая из тела запроса",
           "content": {
             "application/json": {
               "schema": {
@@ -238,10 +257,12 @@
         "tags": [
           "Task"
         ],
+        "summary": "Метод изменения статуса задачи",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID задачи в которой меняется статус",
             "required": true,
             "schema": {
               "type": "integer",
@@ -250,6 +271,7 @@
           }
         ],
         "requestBody": {
+          "description": "ID статуса присваиваемый задаче",
           "content": {
             "application/json": {
               "schema": {
@@ -348,5 +370,23 @@
         "additionalProperties": false
       }
     }
-  }
+  },
+  "tags": [
+    {
+      "name": "Category",
+      "description": "Контроллер управления категориями задач"
+    },
+    {
+      "name": "Priority",
+      "description": "Контроллер управления приоритетами задач"
+    },
+    {
+      "name": "Status",
+      "description": "Контроллер управления статусами задач"
+    },
+    {
+      "name": "Task",
+      "description": "Контроллер управления задачами"
+    }
+  ]
 }

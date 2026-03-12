@@ -4,6 +4,9 @@ using TaskManager.Services.APIService;
 
 namespace TaskManager.Controllers
 {
+    /// <summary>
+    /// Контроллер управления задачами
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class TaskController : ControllerBase
@@ -15,6 +18,14 @@ namespace TaskManager.Controllers
             _taskApiService = taskApiService;
         }
 
+        /// <summary>
+        /// Метод получения задач
+        /// </summary>
+        /// <param name="includeExpired">Параметр, включающий истекшие задачи по сроку истечения. По умолчанию false.</param>
+        /// <param name="onlyExpired">Параметр, включающий ТОЛЬКО истекшие задачи по сроку истечения. По умолчанию false</param>
+        /// <param name="categoryId">ID параметр выбранной категории. Без указания будут получены задачи всех категорий.</param>
+        /// <param name="statusId">ID параметр выбранного статуса. Без указания будут получени задачи со всеми статусами</param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Get(
             [FromQuery] bool includeExpired = false,
@@ -31,6 +42,11 @@ namespace TaskManager.Controllers
             return Ok(tasks);
         }
 
+        /// <summary>
+        /// Метод получения задачи
+        /// </summary>
+        /// <param name="id">ID задачи</param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
@@ -41,6 +57,11 @@ namespace TaskManager.Controllers
                 : NotFound();
         }
 
+        /// <summary>
+        /// Метод создания задачи
+        /// </summary>
+        /// <param name="taskModel">Модель задачи CreateTaskModel, принимаемая из тела запроса</param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateTaskModel taskModel)
         {
@@ -49,6 +70,12 @@ namespace TaskManager.Controllers
             return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
         }
 
+        /// <summary>
+        /// Метод изменения задачи
+        /// </summary>
+        /// <param name="id">ID изменяемой задачи</param>
+        /// <param name="taskModel">Модель задачи UpdateTaskModel, принимаемая из тела запроса</param>
+        /// <returns></returns>
         [HttpPatch("{id}")]
         public async Task<IActionResult> Patch(int id, [FromBody] UpdateTaskModel taskModel)
         {
@@ -57,6 +84,12 @@ namespace TaskManager.Controllers
             return Ok(updatedTask);
         }
 
+        /// <summary>
+        /// Метод изменения статуса задачи
+        /// </summary>
+        /// <param name="id">ID задачи в которой меняется статус</param>
+        /// <param name="statusId">ID статуса присваиваемый задаче</param>
+        /// <returns></returns>
         [HttpPatch("{id}/change-status")]
         public async Task<IActionResult> ChangeStatus(int id, [FromBody] int statusId)
         {
@@ -65,6 +98,12 @@ namespace TaskManager.Controllers
             return Ok(updatedTask);
         }
 
+
+        /// <summary>
+        /// Метод удаления задачи
+        /// </summary>
+        /// <param name="id">ID удаляемой задачи</param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {

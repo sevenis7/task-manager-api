@@ -1,0 +1,147 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>TaskManager</name>
+    </assembly>
+    <members>
+        <member name="M:TaskManager.Controllers.BaseController`2.GetById(System.Int32)">
+            <summary>
+            Получить данные по ID
+            </summary>
+            <param name="id"></param>
+            <returns></returns>
+        </member>
+        <member name="T:TaskManager.Controllers.CategoryController">
+            <summary>
+            Контроллер управления категориями задач
+            </summary>
+        </member>
+        <member name="T:TaskManager.Controllers.PriorityController">
+            <summary>
+            Контроллер управления приоритетами задач
+            </summary>
+        </member>
+        <member name="T:TaskManager.Controllers.StatusController">
+            <summary>
+            Контроллер управления статусами задач
+            </summary>
+        </member>
+        <member name="T:TaskManager.Controllers.TaskController">
+            <summary>
+            Контроллер управления задачами
+            </summary>
+        </member>
+        <member name="M:TaskManager.Controllers.TaskController.Get(System.Boolean,System.Boolean,System.Nullable{System.Int32},System.Nullable{System.Int32})">
+            <summary>
+            Метод получения задач
+            </summary>
+            <param name="includeExpired">Параметр, включающий истекшие задачи по сроку истечения. По умолчанию false.</param>
+            <param name="onlyExpired">Параметр, включающий ТОЛЬКО истекшие задачи по сроку истечения. По умолчанию false</param>
+            <param name="categoryId">ID параметр выбранной категории. Без указания будут получены задачи всех категорий.</param>
+            <param name="statusId">ID параметр выбранного статуса. Без указания будут получени задачи со всеми статусами</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskManager.Controllers.TaskController.GetById(System.Int32)">
+            <summary>
+            Метод получения задачи
+            </summary>
+            <param name="id">ID задачи</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskManager.Controllers.TaskController.Post(TaskManager.Models.CreateTaskModel)">
+            <summary>
+            Метод создания задачи
+            </summary>
+            <param name="taskModel">Модель задачи CreateTaskModel, принимаемая из тела запроса</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskManager.Controllers.TaskController.Patch(System.Int32,TaskManager.Models.UpdateTaskModel)">
+            <summary>
+            Метод изменения задачи
+            </summary>
+            <param name="id">ID изменяемой задачи</param>
+            <param name="taskModel">Модель задачи UpdateTaskModel, принимаемая из тела запроса</param>
+            <returns></returns>
+        </member>
+        <member name="M:TaskManager.Controllers.TaskController.ChangeStatus(System.Int32,System.Int32)">
+            <summary>
+            Метод изменения статуса задачи
+            </summary>
+            <param name="id">ID задачи в которой меняется статус</param>
+            <param name="statusId">ID статуса присваиваемый задаче</param>
+            <returns></returns>
+        </member>
+        <member name="T:TaskManager.Migrations.InitialCreateWithSeeds">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.InitialCreateWithSeeds.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.InitialCreateWithSeeds.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.InitialCreateWithSeeds.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaskManager.Migrations.AddStatusTable">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.AddStatusTable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.AddStatusTable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.AddStatusTable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaskManager.Migrations.AddCreatedDateToCategoriesAndStatuses">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.AddCreatedDateToCategoriesAndStatuses.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.AddCreatedDateToCategoriesAndStatuses.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.AddCreatedDateToCategoriesAndStatuses.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaskManager.Migrations.MakeCategoryIdNullable">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.MakeCategoryIdNullable.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.MakeCategoryIdNullable.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.MakeCategoryIdNullable.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaskManager.Migrations.AddedPriorityItem">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.AddedPriorityItem.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.AddedPriorityItem.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.AddedPriorityItem.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="T:TaskManager.Migrations.AuthDb.InitialAuth">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.AuthDb.InitialAuth.Up(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.AuthDb.InitialAuth.Down(Microsoft.EntityFrameworkCore.Migrations.MigrationBuilder)">
+            <inheritdoc />
+        </member>
+        <member name="M:TaskManager.Migrations.AuthDb.InitialAuth.BuildTargetModel(Microsoft.EntityFrameworkCore.ModelBuilder)">
+            <inheritdoc />
+        </member>
+    </members>
+</doc>

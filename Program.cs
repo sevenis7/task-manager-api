@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using System.Reflection;
 using TaskManager.Data;
 using TaskManager.Entities;
 using TaskManager.Models;
@@ -35,7 +37,19 @@ namespace TaskManager
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c=>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
+                    Title = "Task Manager API",
+                    Version = "v1",
+                    Description = "API для управления задач с JWT авторизацией"
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
+            }); 
 
             builder.Services.AddOpenApi();
             builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
