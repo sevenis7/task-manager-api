@@ -8,8 +8,8 @@
 
         public DateTime ExpiresAt { get; set; }
 
-        public int UserId { get; set; }
+        public required int UserId { get; set; }
 
-        public UserItem User {  get; set; } 
+        public UserItem? User {  get; set; } 
     }
 }
