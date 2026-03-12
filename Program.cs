@@ -2,8 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using TaskManager.Data;
 using TaskManager.Entities;
 using TaskManager.Models;
+using TaskManager.Models.Auth;
 using TaskManager.Services;
 using TaskManager.Services.APIService;
+using TaskManager.Services.Auth;
 using TaskManager.Services.Mappers;
 using TaskManager.Services.Mappers.Interfaces;
 
@@ -19,6 +21,7 @@ namespace TaskManager
 
             builder.Services.AddControllers();
 
+            builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
             builder.Services.AddDbContext<TaskDbContext>(options =>
             {
@@ -31,6 +34,8 @@ namespace TaskManager
 
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             builder.Services.AddOpenApi();
+            builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+            builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddScoped<ITaskService,TaskService>();
             builder.Services.AddScoped<ITaskApiService, TaskApiService>();
             builder.Services.AddTransient<IEntityMapper<TaskItem, TaskDto>, TaskMapper>();
