@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 using TaskManager.Models.Auth;
 using TaskManager.Services.Auth;
 
@@ -27,7 +28,7 @@ namespace TaskManager.Controllers
         [HttpDelete("logout")]
         public async Task<IActionResult> Logout()
         {
-            var stringUserId = HttpContext.User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value;
+            var stringUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             if (stringUserId is null)
                 return Unauthorized();

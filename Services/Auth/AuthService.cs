@@ -23,19 +23,14 @@ namespace TaskManager.Services.Auth
 
         public async Task<AuthResponse> Register(RegisterModel model)
         {
-            var userNameCheck = _context.Users.AnyAsync(x => x.UserName == model.UserName);
-            var emailCheck = _context.Users.AnyAsync(x => x.Email == model.Email);
+            var userNameCheck = await _context.Users.AnyAsync(x => x.UserName == model.UserName);
+            var emailCheck = await _context.Users.AnyAsync(x => x.Email == model.Email);
 
-            await Task.WhenAll(userNameCheck, emailCheck);
-
-            bool userNameExists = await userNameCheck;
-            bool emailExists = await emailCheck;
-
-            if (userNameExists && emailExists)
+            if (userNameCheck && emailCheck)
                 throw new ArgumentException("User with this username and email already exists");
-            if (emailExists)
+            if (emailCheck)
                 throw new ArgumentException("User with this email already exists");
-            if (userNameExists)
+            if (userNameCheck)
                 throw new ArgumentException("User with this username already exists");
 
             var passwordHash = _passwordHasher.HashPassword(model.Password);
@@ -50,6 +45,10 @@ namespace TaskManager.Services.Auth
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
+
+            user = _context.Users
+                .Include(x => x.Role)
+                .FirstOrDefault(x => x.Id == user.Id)!;
 
             var accessToken = _jwtService.GenerateAccessToken(user);
             var refreshToken = _jwtService.GenerateRefreshToken();
@@ -75,7 +74,9 @@ namespace TaskManager.Services.Auth
 
         public async Task<AuthResponse> Login(LoginModel model)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == model.Email);
+            var user = await _context.Users
+                .Include(x => x.Role)
+                .FirstOrDefaultAsync(x => x.Email == model.Email);
 
             if (user is null)
                 throw new ArgumentException("No user found with this email");

@@ -1,6 +1,9 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using System.Text;
 using TaskManager.Data;
 using TaskManager.Entities;
 using TaskManager.Models;
@@ -46,14 +49,37 @@ namespace TaskManager
                     Description = "API дл€ управлени€ задач с JWT авторизацией"
                 });
 
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "¬ведите JWT токен",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type  = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        }
+                        ,
+                        new string[] {}
+                    }
+                });
+
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath, includeControllerXmlComments: true);
             }); 
 
             builder.Services.AddOpenApi();
-            builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
-            builder.Services.AddScoped<IJwtService, JwtService>();
             builder.Services.AddScoped<ITaskService,TaskService>();
             builder.Services.AddScoped<ITaskApiService, TaskApiService>();
             builder.Services.AddTransient<IEntityMapper<TaskItem, TaskDto>, TaskMapper>();
@@ -66,6 +92,25 @@ namespace TaskManager
             builder.Services.AddScoped<IBaseApiService<CategoryItemModel, CategoryDto>, CategoryApiService>();
             builder.Services.AddScoped<IBaseService<PriorityItem, PriorityItemModel>, PriorityService>();
             builder.Services.AddScoped<IBaseApiService<PriorityItemModel, PriorityDto>, PriorityApiService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
+            builder.Services.AddTransient<IJwtService, JwtService>();
+            builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+                        ValidateAudience = true,
+                        ValidAudience = builder.Configuration["JwtSettings:Audience"],
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Secret"]!))
+                    };
+                });
 
             var app = builder.Build();
 
@@ -78,8 +123,8 @@ namespace TaskManager
 
             app.UseHttpsRedirection();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
 
             app.MapControllers();
 
