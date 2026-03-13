@@ -71,6 +71,13 @@
             <param name="statusId">ID статуса присваиваемый задаче</param>
             <returns></returns>
         </member>
+        <member name="M:TaskManager.Controllers.TaskController.Delete(System.Int32)">
+            <summary>
+            Метод удаления задачи
+            </summary>
+            <param name="id">ID удаляемой задачи</param>
+            <returns></returns>
+        </member>
         <member name="T:TaskManager.Migrations.InitialCreateWithSeeds">
             <inheritdoc />
         </member>

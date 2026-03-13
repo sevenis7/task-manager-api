@@ -17,7 +17,7 @@ namespace TaskManager.Services.Auth
             IPasswordHasher passwordHasher, 
             AuthDbContext context)
         {
-            _jwtService = jwtService;
+            _jwtService = jwtService;   
             _passwordHasher = passwordHasher;
             _context = context;
         }
@@ -55,7 +55,7 @@ namespace TaskManager.Services.Auth
             var accessToken = _jwtService.GenerateAccessToken(user);
             var refreshToken = _jwtService.GenerateRefreshToken();
 
-            RefreshTokenItem rt = new RefreshTokenItem
+            var rt = new RefreshTokenItem
             {
                 Token = refreshToken,
                 UserId = user.Id,
@@ -65,13 +65,47 @@ namespace TaskManager.Services.Auth
             _context.RefreshTokens.Add(rt);
             await _context.SaveChangesAsync();
 
-            AuthResponse response = new AuthResponse
+            AuthResponse auth = new AuthResponse
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken
             };
 
-            return response;
+            return auth;
+        }
+
+        public async Task<AuthResponse> Login(LoginModel model)
+        {
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == model.Email);
+
+            if (user is null)
+                throw new ArgumentException("No user found with this email");
+
+            var verify = _passwordHasher.VerifyPassword(model.Password, user.PasswordHash);
+
+            if (!verify)
+                throw new ArgumentException("Invalid password");
+
+            var aсcessToken = _jwtService.GenerateAccessToken(user);
+            var refreshToken = _jwtService.GenerateRefreshToken();
+
+            AuthResponse auth = new AuthResponse
+            {
+                AccessToken = aсcessToken,
+                RefreshToken = refreshToken
+            };
+
+            var rt = new RefreshTokenItem
+            {
+                Token = refreshToken,
+                UserId = user.Id,
+                ExpiresAt = DateTime.UtcNow.AddDays(7)
+            };
+
+            _context.RefreshTokens.Add(rt);
+            await _context.SaveChangesAsync();
+
+            return auth;
         }
     }
 }

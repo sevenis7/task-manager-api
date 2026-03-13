@@ -234,10 +234,12 @@
         "tags": [
           "Task"
         ],
+        "summary": "Метод удаления задачи",
         "parameters": [
           {
             "name": "id",
             "in": "path",
+            "description": "ID удаляемой задачи",
             "required": true,
             "schema": {
               "type": "integer",
