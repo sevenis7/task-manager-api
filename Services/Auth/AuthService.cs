@@ -1,23 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Threading.Tasks;
 using TaskManager.Data;
 using TaskManager.Entities;
 using TaskManager.Models.Auth;
 
 namespace TaskManager.Services.Auth
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
         private readonly IJwtService _jwtService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly AuthDbContext _context;
 
         public AuthService(
-            IJwtService jwtService, 
-            IPasswordHasher passwordHasher, 
+            IJwtService jwtService,
+            IPasswordHasher passwordHasher,
             AuthDbContext context)
         {
-            _jwtService = jwtService;   
+            _jwtService = jwtService;
             _passwordHasher = passwordHasher;
             _context = context;
         }
