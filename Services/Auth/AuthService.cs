@@ -107,5 +107,17 @@ namespace TaskManager.Services.Auth
 
             return auth;
         }
+
+        public async Task Logout(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user is null)
+                throw new ArgumentException("Invalid user");
+
+            var refreshTokens = await _context.RefreshTokens.Where(x => x.UserId == userId).ToListAsync();
+            _context.RefreshTokens.RemoveRange(refreshTokens);
+            await _context.SaveChangesAsync();
+        }
     }
 }
