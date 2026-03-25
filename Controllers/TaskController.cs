@@ -34,7 +34,14 @@ namespace TaskManager.Controllers
             [FromQuery] int? categoryId = null,
             [FromQuery] int? statusId = null)
         {
+
+            var userId = GetUserId();
+
+            if (userId is null)
+                return Unauthorized();
+
             var tasks = await _taskApiService.GetTasksAsync(
+                userId.Value,
                 includeExpired,
                 onlyExpired,
                 categoryId,
@@ -51,7 +58,12 @@ namespace TaskManager.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var task = await _taskApiService.GetByIdAsync(id);
+            var userId = GetUserId();
+
+            if (userId is null)
+                return Unauthorized();
+
+            var task = await _taskApiService.GetByIdAsync(id, userId.Value);
 
             return task != null
                 ? Ok(task)
@@ -66,14 +78,12 @@ namespace TaskManager.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateTaskModel taskModel)
         {
-            var stringUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = GetUserId();
 
-            if (stringUserId is null)
+            if (userId is null)
                 return Unauthorized();
 
-            int userId = Convert.ToInt32(stringUserId);
-
-            var task = await _taskApiService.AddAsync(taskModel, userId);
+            var task = await _taskApiService.AddAsync(taskModel, userId.Value);
 
             return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
         }
@@ -87,7 +97,12 @@ namespace TaskManager.Controllers
         [HttpPatch("{id}")]
         public async Task<IActionResult> Patch(int id, [FromBody] UpdateTaskModel taskModel)
         {
-            var updatedTask = await _taskApiService.EditTaskAsync(id, taskModel);
+            var userId = GetUserId();
+
+            if (userId is null)
+                return Unauthorized();
+
+            var updatedTask = await _taskApiService.EditTaskAsync(id, taskModel, userId.Value);
 
             return Ok(updatedTask);
         }
@@ -101,7 +116,12 @@ namespace TaskManager.Controllers
         [HttpPatch("{id}/change-status")]
         public async Task<IActionResult> ChangeStatus(int id, [FromBody] int statusId)
         {
-            var updatedTask = await _taskApiService.ChangeStatusAsync(id, statusId);
+            var userId = GetUserId();
+
+            if (userId is null)
+                return Unauthorized();
+
+            var updatedTask = await _taskApiService.ChangeStatusAsync(id, statusId, userId.Value);
 
             return Ok(updatedTask);
         }
@@ -115,9 +135,24 @@ namespace TaskManager.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _taskApiService.DeleteAsync(id);
+            var userId = GetUserId();
+
+            if (userId is null)
+                return Unauthorized();
+
+            await _taskApiService.DeleteAsync(id, userId.Value);
 
             return NoContent();
+        }
+
+        private int? GetUserId()
+        {
+            var stringUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (stringUserId == null) 
+                return null;
+
+            return Convert.ToInt32(stringUserId);
         }
     }
 }

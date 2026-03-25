@@ -16,14 +16,11 @@ namespace TaskManager.Services.APIService
             _taskMapper = taskMapper;
         }
 
-        public async Task<TaskDto?> GetByIdAsync(int id)
+        public async Task<TaskDto> GetByIdAsync(int id, int userId)
         {
-            var task = await _taskService.GetByIdAsync(id);
+            var task = await _taskService.GetByIdAsync(id, userId);
 
-            if (task == null)
-                return null;
-
-            return _taskMapper.MapToDto(task);
+            return _taskMapper.MapToDto(task!);
         }
 
         public async Task<TaskDto> AddAsync(CreateTaskModel model, int userId)
@@ -40,11 +37,11 @@ namespace TaskManager.Services.APIService
             }
         }
 
-        public async Task<TaskDto> EditTaskAsync(int id, UpdateTaskModel model)
+        public async Task<TaskDto> EditTaskAsync(int id, UpdateTaskModel model, int userId)
         {
             try
             {
-                var task = await _taskService.EditTaskAsync(id, model);
+                var task = await _taskService.EditTaskAsync(id, model, userId);
 
                 return _taskMapper.MapToDto(task);
             }
@@ -55,11 +52,11 @@ namespace TaskManager.Services.APIService
 
         }
 
-        public async Task<TaskDto> ChangeStatusAsync(int id, int statusId)
+        public async Task<TaskDto> ChangeStatusAsync(int id, int statusId, int userId)
         {
             try
             {
-                var task = await _taskService.ChangeStatusAsync(id, statusId);
+                var task = await _taskService.ChangeStatusAsync(id, statusId, userId);
 
                 return _taskMapper.MapToDto(task);
             }
@@ -70,21 +67,22 @@ namespace TaskManager.Services.APIService
         }
 
         public async Task<List<TaskDto>> GetTasksAsync(
+            int userId,
             bool includeExpired,
             bool onlyExpired,
             int? categoryId,
             int? statusId)
         {
-            var tasks = await _taskService.GetTasksAsync(includeExpired, onlyExpired, categoryId, statusId);
+            var tasks = await _taskService.GetTasksAsync(userId, includeExpired, onlyExpired, categoryId, statusId);
 
             return _taskMapper.MapCollectionToDto(tasks);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, int userId)
         {
             try
             {
-                await _taskService.DeleteAsync(id);
+                await _taskService.DeleteAsync(id, userId);
             }
             catch (ArgumentException)
             {

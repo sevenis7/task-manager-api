@@ -14,6 +14,6 @@ namespace TaskManager.Models
 
         public int? CategoryId { get; set; }
 
-        public int? PriroityId { get; set; }
+        public int? PriorityId { get; set; }
     }
 }

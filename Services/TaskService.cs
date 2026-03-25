@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 using TaskManager.Data;
 using TaskManager.Entities;
 using TaskManager.Models;
@@ -8,21 +9,14 @@ namespace TaskManager.Services
     public class TaskService : ITaskService
     {
         private readonly TaskDbContext _taskContext;
-        private readonly AuthDbContext _authContext;
 
-        public TaskService(TaskDbContext context, AuthDbContext authContext)
+        public TaskService(TaskDbContext context)
         {
             _taskContext = context;
-            _authContext = authContext;
         }
 
         public async Task<TaskItem> AddAsync(CreateTaskModel model, int userId)
         {
-            var userExisted = await _authContext.Users.FindAsync(userId);
-
-            if (userExisted is null)
-                throw new ArgumentException("User not found");
-
             if (model.CategoryId.HasValue)
             {
                 var categoryExists = await _taskContext.Categories
@@ -40,8 +34,6 @@ namespace TaskManager.Services
 
             TaskItem task = MapCreateModelToEntity(model);
 
-            task.UserId = userExisted.Id;
-
             _taskContext.Tasks.Add(task);
             await _taskContext.SaveChangesAsync();
 
@@ -52,25 +44,25 @@ namespace TaskManager.Services
                 .FirstAsync(t => t.Id == task.Id);
         }
 
-        public async Task<TaskItem?> GetByIdAsync(int id)
+        public async Task<TaskItem?> GetByIdAsync(int id, int userId)
         {
             var task = await _taskContext.Tasks
                 .Include(t => t.Category)
                 .Include(t => t.Status)
                 .Include(t => t.Priority)
-                .FirstOrDefaultAsync(x => x.Id == id);
+                .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
+
+            if (task is null)
+                throw new ArgumentException("Task not found or access denied");
 
             return task;
         }
 
-        public async Task<TaskItem> EditTaskAsync(int id, UpdateTaskModel model)
+        public async Task<TaskItem> EditTaskAsync(int id, UpdateTaskModel model, int userId)
         {
-            var task = await GetByIdAsync(id);
+            var task = await GetByIdAsync(id, userId);
 
-            if (task == null)
-                throw new ArgumentException("Task not found");
-
-            task.Name = model.Name;
+            task!.Name = model.Name;
             task.Description = model.Description;
             task.DueDate = model.DueDate;
 
@@ -86,7 +78,7 @@ namespace TaskManager.Services
             }
 
             var priorityExists = await _taskContext.Priorities
-                .AnyAsync(p => p.Id == model.PriroityId);
+                .AnyAsync(p => p.Id == model.PriorityId);
 
             if (!priorityExists)
                 throw new ArgumentException("Priority not found");
@@ -95,17 +87,15 @@ namespace TaskManager.Services
             return task;
         }
 
-        public async Task<TaskItem> ChangeStatusAsync(int taskId, int statusId)
+        public async Task<TaskItem> ChangeStatusAsync(int taskId, int statusId, int userId)
         {
-            var task = await GetByIdAsync(taskId);
-            if (task == null)
-                throw new ArgumentException("Task not found");
+            var task = await GetByIdAsync(taskId, userId);
 
             var statusExists = await _taskContext.Statuses.AnyAsync(x => x.Id == statusId);
             if (!statusExists)
                 throw new ArgumentException("Status not found");
 
-            task.StatusId = statusId;
+            task!.StatusId = statusId;
 
             await _taskContext.SaveChangesAsync();
 
@@ -113,6 +103,7 @@ namespace TaskManager.Services
         }
 
         public async Task<List<TaskItem>> GetTasksAsync(
+            int userId,
             bool includeExpired = false,
             bool onlyExpired = false,
             int? categoryId = null,
@@ -122,6 +113,7 @@ namespace TaskManager.Services
                 .Include(x => x.Category)
                 .Include(x => x.Status)
                 .Include(x => x.Priority)
+                .Where(x => x.UserId == userId)
                 .AsQueryable();
 
             if (categoryId.HasValue)
@@ -140,12 +132,12 @@ namespace TaskManager.Services
             return await query.ToListAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task DeleteAsync(int id, int userId)
         {
-            var task = await _taskContext.Tasks.FindAsync(id);
+            var task = await _taskContext.Tasks.FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
 
-            if (task == null)
-                throw new ArgumentException("Task not found");
+            if (task is null)
+                throw new ArgumentException("Task not found or access denied");
 
             _taskContext.Tasks.Remove(task);
             await _taskContext.SaveChangesAsync();
@@ -160,5 +152,6 @@ namespace TaskManager.Services
                 CategoryId = source.CategoryId,
                 PriorityId = source.PriorityId
             };
+
     }
 }
