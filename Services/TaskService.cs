@@ -34,6 +34,8 @@ namespace TaskManager.Services
 
             TaskItem task = MapCreateModelToEntity(model);
 
+            task.UserId = userId;
+
             _taskContext.Tasks.Add(task);
             await _taskContext.SaveChangesAsync();
 
