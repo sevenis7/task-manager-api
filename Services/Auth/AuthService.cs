@@ -35,12 +35,14 @@ namespace TaskManager.Services.Auth
 
             var passwordHash = _passwordHasher.HashPassword(model.Password);
 
+            var userRole = await _context.Roles.FirstAsync(x => x.Name == "User");
+
             UserItem user = new UserItem
             {
                 UserName = model.UserName,
                 PasswordHash = passwordHash,
                 Email = model.Email,
-                RoleId = 1
+                RoleId = userRole.Id
             };
 
             _context.Users.Add(user);
