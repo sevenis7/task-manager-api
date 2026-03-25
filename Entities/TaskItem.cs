@@ -25,7 +25,5 @@
         public PriorityItem Priority { get; set; } = null!;
 
         public int UserId { get; set; }
-
-        public UserItem? User { get; set; }
     }
 }
