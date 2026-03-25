@@ -20,8 +20,12 @@
 
         public StatusItem Status { get; set; } = null!;
 
-        public required int PriorityId { get; set; }
+        public int PriorityId { get; set; }
 
         public PriorityItem Priority { get; set; } = null!;
+
+        public int UserId { get; set; }
+
+        public UserItem? User { get; set; }
     }
 }
