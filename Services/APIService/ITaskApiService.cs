@@ -4,7 +4,7 @@ namespace TaskManager.Services.APIService
 {
     public interface ITaskApiService
     {
-        Task<TaskDto> AddAsync(CreateTaskModel model);
+        Task<TaskDto> AddAsync(CreateTaskModel model, int userId);
         Task<TaskDto> ChangeStatusAsync(int id, int statusId);
         Task DeleteAsync(int id);
         Task<TaskDto> EditTaskAsync(int id, UpdateTaskModel model);

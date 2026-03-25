@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using TaskManager.Models;
 using TaskManager.Services.APIService;
 
@@ -65,7 +66,14 @@ namespace TaskManager.Controllers
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CreateTaskModel taskModel)
         {
-            var task = await _taskApiService.AddAsync(taskModel);
+            var stringUserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (stringUserId is null)
+                return Unauthorized();
+
+            int userId = Convert.ToInt32(stringUserId);
+
+            var task = await _taskApiService.AddAsync(taskModel, userId);
 
             return CreatedAtAction(nameof(GetById), new { id = task.Id }, task);
         }

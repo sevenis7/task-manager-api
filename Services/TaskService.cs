@@ -7,25 +7,32 @@ namespace TaskManager.Services
 {
     public class TaskService : ITaskService
     {
-        private readonly TaskDbContext _context;
+        private readonly TaskDbContext _taskContext;
+        private readonly AuthDbContext _authContext;
 
-        public TaskService(TaskDbContext context)
+        public TaskService(TaskDbContext context, AuthDbContext authContext)
         {
-            _context = context;
+            _taskContext = context;
+            _authContext = authContext;
         }
 
-        public async Task<TaskItem> AddAsync(CreateTaskModel model)
+        public async Task<TaskItem> AddAsync(CreateTaskModel model, int userId)
         {
+            var userExisted = await _authContext.Users.FindAsync(userId);
+
+            if (userExisted is null)
+                throw new ArgumentException("User not found");
+
             if (model.CategoryId.HasValue)
             {
-                var categoryExists = await _context.Categories
+                var categoryExists = await _taskContext.Categories
                     .AnyAsync(x => x.Id == model.CategoryId);
 
                 if (!categoryExists)
                     throw new ArgumentException("Category not found");
             }
 
-            var priorityExists = await _context.Priorities
+            var priorityExists = await _taskContext.Priorities
                 .AnyAsync(p => p.Id == model.PriorityId);
 
             if (!priorityExists)
@@ -33,10 +40,12 @@ namespace TaskManager.Services
 
             TaskItem task = MapCreateModelToEntity(model);
 
-            _context.Tasks.Add(task);
-            await _context.SaveChangesAsync();
+            task.UserId = userExisted.Id;
 
-            return await _context.Tasks
+            _taskContext.Tasks.Add(task);
+            await _taskContext.SaveChangesAsync();
+
+            return await _taskContext.Tasks
                 .Include(t => t.Category)
                 .Include(t => t.Status)
                 .Include(t => t.Priority)
@@ -45,7 +54,7 @@ namespace TaskManager.Services
 
         public async Task<TaskItem?> GetByIdAsync(int id)
         {
-            var task = await _context.Tasks
+            var task = await _taskContext.Tasks
                 .Include(t => t.Category)
                 .Include(t => t.Status)
                 .Include(t => t.Priority)
@@ -67,7 +76,7 @@ namespace TaskManager.Services
 
             if (model.CategoryId.HasValue)
             {
-                var categoryExists = await _context.Categories
+                var categoryExists = await _taskContext.Categories
                     .AnyAsync(x => x.Id == model.CategoryId);
 
                 if (!categoryExists)
@@ -76,13 +85,13 @@ namespace TaskManager.Services
                 task.CategoryId = model.CategoryId.Value;
             }
 
-            var priorityExists = await _context.Priorities
+            var priorityExists = await _taskContext.Priorities
                 .AnyAsync(p => p.Id == model.PriroityId);
 
             if (!priorityExists)
                 throw new ArgumentException("Priority not found");
 
-            await _context.SaveChangesAsync();
+            await _taskContext.SaveChangesAsync();
             return task;
         }
 
@@ -92,13 +101,13 @@ namespace TaskManager.Services
             if (task == null)
                 throw new ArgumentException("Task not found");
 
-            var statusExists = await _context.Statuses.AnyAsync(x => x.Id == statusId);
+            var statusExists = await _taskContext.Statuses.AnyAsync(x => x.Id == statusId);
             if (!statusExists)
                 throw new ArgumentException("Status not found");
 
             task.StatusId = statusId;
 
-            await _context.SaveChangesAsync();
+            await _taskContext.SaveChangesAsync();
 
             return task;
         }
@@ -109,7 +118,7 @@ namespace TaskManager.Services
             int? categoryId = null,
             int? statusId = null)
         {
-            var query = _context.Tasks
+            var query = _taskContext.Tasks
                 .Include(x => x.Category)
                 .Include(x => x.Status)
                 .Include(x => x.Priority)
@@ -133,13 +142,13 @@ namespace TaskManager.Services
 
         public async Task DeleteAsync(int id)
         {
-            var task = await _context.Tasks.FindAsync(id);
+            var task = await _taskContext.Tasks.FindAsync(id);
 
             if (task == null)
                 throw new ArgumentException("Task not found");
 
-            _context.Tasks.Remove(task);
-            await _context.SaveChangesAsync();
+            _taskContext.Tasks.Remove(task);
+            await _taskContext.SaveChangesAsync();
         }
 
         private TaskItem MapCreateModelToEntity(CreateTaskModel source)

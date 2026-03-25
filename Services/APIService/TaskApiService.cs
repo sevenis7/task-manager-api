@@ -26,11 +26,11 @@ namespace TaskManager.Services.APIService
             return _taskMapper.MapToDto(task);
         }
 
-        public async Task<TaskDto> AddAsync(CreateTaskModel model)
+        public async Task<TaskDto> AddAsync(CreateTaskModel model, int userId)
         {
             try
             {
-                var task = await _taskService.AddAsync(model);
+                var task = await _taskService.AddAsync(model, userId);
 
                 return _taskMapper.MapToDto(task);
             }

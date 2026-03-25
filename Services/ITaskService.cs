@@ -5,7 +5,7 @@ namespace TaskManager.Services
 {
     public interface ITaskService
     {
-        Task<TaskItem> AddAsync(CreateTaskModel model);
+        Task<TaskItem> AddAsync(CreateTaskModel model, int userId);
         Task<TaskItem> ChangeStatusAsync(int taskId, int statusId);
         Task<TaskItem> EditTaskAsync(int id, UpdateTaskModel model);
         Task<TaskItem?> GetByIdAsync(int id);
