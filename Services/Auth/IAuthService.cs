@@ -6,6 +6,7 @@ namespace TaskManager.Services.Auth
     {
         Task<AuthResponse> Login(LoginModel model);
         Task Logout(int userId);
+        Task<AuthResponse> Refresh(string refreshToken);
         Task<AuthResponse> Register(RegisterModel model);
     }
 }

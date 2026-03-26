@@ -118,8 +118,48 @@ namespace TaskManager.Services.Auth
                 throw new ArgumentException("Invalid user");
 
             var refreshTokens = await _context.RefreshTokens.Where(x => x.UserId == userId).ToListAsync();
+
             _context.RefreshTokens.RemoveRange(refreshTokens);
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<AuthResponse> Refresh(string refreshToken)
+        {
+            var existedRefreshToken = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == refreshToken);
+
+            if (existedRefreshToken is null)
+                throw new ArgumentException("Invalid refresh token");
+
+            if (existedRefreshToken.ExpiresAt < DateTime.UtcNow)
+                throw new ArgumentException("Refresh token expired");
+
+            var existedUser = await _context.Users
+                .Include(x => x.Role)
+                .FirstOrDefaultAsync(x => x.Id == existedRefreshToken.UserId);
+
+            if (existedUser is null)
+                throw new ArgumentException("Invalid user");
+
+            _context.RefreshTokens.Remove(existedRefreshToken);
+            await _context.SaveChangesAsync();
+
+            AuthResponse auth = new AuthResponse
+            {
+                AccessToken = _jwtService.GenerateAccessToken(existedUser),
+                RefreshToken = _jwtService.GenerateRefreshToken()
+            };
+
+            RefreshTokenItem newRefreshToken = new RefreshTokenItem
+            {
+                Token = auth.RefreshToken,
+                UserId = existedUser.Id,
+                ExpiresAt = DateTime.UtcNow.AddDays(7)
+            };
+
+            _context.RefreshTokens.Add(newRefreshToken);
+            await _context.SaveChangesAsync();
+
+            return auth;
         }
     }
 }
