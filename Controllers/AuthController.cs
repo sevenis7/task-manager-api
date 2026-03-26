@@ -48,6 +48,13 @@ namespace TaskManager.Controllers
             return Ok(auth);
         }
 
+        [HttpPost("refresh")]
+        public async Task<IActionResult> Refresh([FromBody] string refreshToken)
+        {
+            var auth = await _authService.Refresh(refreshToken);
+
+            return Ok(auth);
+        }
         
     }
 }
