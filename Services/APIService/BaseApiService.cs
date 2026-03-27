@@ -36,28 +36,33 @@ namespace TaskManager.Services.APIService
 
         public virtual async Task<TDto> AddAsync(TCreateModel model)
         {
-            try
-            {
-                var entity = await _service.AddAsync(model);
+            //try
+            //{
+            //    var entity = await _service.AddAsync(model);
 
-                return _mapper.MapToDto(entity);
-            }
-            catch
-            {
-                throw;
-            }
+            //    return _mapper.MapToDto(entity);
+            //}
+            //catch
+            //{
+            //    throw;
+            //}
+            var entity = await _service.AddAsync(model);
+
+            return _mapper.MapToDto(entity);
         }
 
         public virtual async Task DeleteAsync(int id)
         {
-            try
-            {
-                await _service.DeleteAsync(id);
-            }
-            catch
-            {
-                throw;
-            }
+            //try
+            //{
+            //    await _service.DeleteAsync(id);
+            //}
+            //catch
+            //{
+            //    throw;
+            //}
+
+            await _service.DeleteAsync(id);
         }
     }
 }

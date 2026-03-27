@@ -6,6 +6,7 @@ using System.Reflection;
 using System.Text;
 using TaskManager.Data;
 using TaskManager.Entities;
+using TaskManager.Middleware;
 using TaskManager.Models;
 using TaskManager.Models.Auth;
 using TaskManager.Services;
@@ -113,6 +114,8 @@ namespace TaskManager
                 });
 
             var app = builder.Build();
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
