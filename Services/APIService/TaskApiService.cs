@@ -25,45 +25,24 @@ namespace TaskManager.Services.APIService
 
         public async Task<TaskDto> AddAsync(CreateTaskModel model, int userId)
         {
-            try
-            {
-                var task = await _taskService.AddAsync(model, userId);
+            var task = await _taskService.AddAsync(model, userId);
 
-                return _taskMapper.MapToDto(task);
-            }
-            catch (ArgumentException ex)
-            {
-                throw;
-            }
+            return _taskMapper.MapToDto(task);
         }
 
         public async Task<TaskDto> EditTaskAsync(int id, UpdateTaskModel model, int userId)
         {
-            try
-            {
-                var task = await _taskService.EditTaskAsync(id, model, userId);
+            var task = await _taskService.EditTaskAsync(id, model, userId);
 
-                return _taskMapper.MapToDto(task);
-            }
-            catch (ArgumentException ex)
-            {
-                throw;
-            }
+            return _taskMapper.MapToDto(task);
 
         }
 
         public async Task<TaskDto> ChangeStatusAsync(int id, int statusId, int userId)
         {
-            try
-            {
-                var task = await _taskService.ChangeStatusAsync(id, statusId, userId);
+            var task = await _taskService.ChangeStatusAsync(id, statusId, userId);
 
-                return _taskMapper.MapToDto(task);
-            }
-            catch (ArgumentException ex)
-            {
-                throw;
-            }
+            return _taskMapper.MapToDto(task);
         }
 
         public async Task<List<TaskDto>> GetTasksAsync(
@@ -80,14 +59,7 @@ namespace TaskManager.Services.APIService
 
         public async Task DeleteAsync(int id, int userId)
         {
-            try
-            {
-                await _taskService.DeleteAsync(id, userId);
-            }
-            catch (ArgumentException)
-            {
-                throw;
-            }
+            await _taskService.DeleteAsync(id, userId);
         }
     }
 }
