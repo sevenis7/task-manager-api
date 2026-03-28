@@ -113,8 +113,10 @@ namespace TaskManager.Services
             return task;
         }
 
-        public async Task<List<TaskItem>> GetTasksAsync(
+        public async Task<PagedResponse<TaskItem>> GetTasksAsync(
             int userId,
+            int page = 1,
+            int pageSize = 10,
             bool includeExpired = false,
             bool onlyExpired = false,
             int? categoryId = null,
@@ -140,7 +142,14 @@ namespace TaskManager.Services
                 (_, true) => query.Where(x => x.DueDate != null && x.DueDate < DateTime.UtcNow)
             };
 
-            return await query.ToListAsync();
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResponse<TaskItem>(items, totalCount, page, pageSize);
         }
 
         public async Task DeleteAsync(int id, int userId)

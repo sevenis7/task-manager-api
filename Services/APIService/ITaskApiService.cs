@@ -9,6 +9,6 @@ namespace TaskManager.Services.APIService
         Task DeleteAsync(int id, int userId);
         Task<TaskDto> EditTaskAsync(int id, UpdateTaskModel model, int userId);
         Task<TaskDto> GetByIdAsync(int id, int userId);
-        Task<List<TaskDto>> GetTasksAsync(int userId, bool includeExpired, bool onlyExpired, int? categoryId, int? statusId);
+        Task<PagedResponse<TaskDto>> GetTasksAsync(int userId, int page = 1, int pageSize = 10, bool includeExpired = false, bool onlyExpired = false, int? categoryId = null, int? statusId = null);
     }
 }

@@ -45,16 +45,31 @@ namespace TaskManager.Services.APIService
             return _taskMapper.MapToDto(task);
         }
 
-        public async Task<List<TaskDto>> GetTasksAsync(
+        public async Task<PagedResponse<TaskDto>> GetTasksAsync(
             int userId,
-            bool includeExpired,
-            bool onlyExpired,
-            int? categoryId,
-            int? statusId)
+            int page = 1,
+            int pageSize = 10,
+            bool includeExpired = false,
+            bool onlyExpired = false,
+            int? categoryId = null,
+            int? statusId = null)
         {
-            var tasks = await _taskService.GetTasksAsync(userId, includeExpired, onlyExpired, categoryId, statusId);
+            var pagedTasks = await _taskService.GetTasksAsync(
+                userId,
+                page,
+                pageSize,
+                includeExpired,
+                onlyExpired,
+                categoryId,
+                statusId);
 
-            return _taskMapper.MapCollectionToDto(tasks);
+            var dtos = _taskMapper.MapCollectionToDto(pagedTasks.Items);
+
+            return new PagedResponse<TaskDto>(
+                dtos,
+                pagedTasks.TotalCount,
+                pagedTasks.Page,
+                pagedTasks.PageSize);
         }
 
         public async Task DeleteAsync(int id, int userId)

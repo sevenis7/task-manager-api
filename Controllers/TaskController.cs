@@ -24,6 +24,8 @@ namespace TaskManager.Controllers
         /// <summary>
         /// Метод получения задач
         /// </summary>
+        /// <param name="page">Параметр, указывающий номер страницы задач</param>
+        /// <param name="pageSize">Параметр, указывают кол-во задач на странице</param>
         /// <param name="includeExpired">Параметр, включающий истекшие задачи по сроку истечения. По умолчанию false.</param>
         /// <param name="onlyExpired">Параметр, включающий ТОЛЬКО истекшие задачи по сроку истечения. По умолчанию false</param>
         /// <param name="categoryId">ID параметр выбранной категории. Без указания будут получены задачи всех категорий.</param>
@@ -31,6 +33,8 @@ namespace TaskManager.Controllers
         /// <returns></returns>
         [HttpGet]
         public async Task<IActionResult> Get(
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 10,
             [FromQuery] bool includeExpired = false,
             [FromQuery] bool onlyExpired = false,
             [FromQuery] int? categoryId = null,
@@ -44,6 +48,8 @@ namespace TaskManager.Controllers
 
             var tasks = await _taskApiService.GetTasksAsync(
                 userId.Value,
+                page,
+                pageSize,
                 includeExpired,
                 onlyExpired,
                 categoryId,
