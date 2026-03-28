@@ -9,10 +9,12 @@ namespace TaskManager.Services
     public class TaskService : ITaskService
     {
         private readonly TaskDbContext _taskContext;
+        private readonly ILogger<TaskService> _logger;
 
-        public TaskService(TaskDbContext context)
+        public TaskService(TaskDbContext context, ILogger<TaskService> logger)
         {
             _taskContext = context;
+            _logger = logger;
         }
 
         public async Task<TaskItem> AddAsync(CreateTaskModel model, int userId)
@@ -38,6 +40,8 @@ namespace TaskManager.Services
 
             _taskContext.Tasks.Add(task);
             await _taskContext.SaveChangesAsync();
+
+            _logger.LogInformation("User {userId} created task {taskId}", userId, task.Id);
 
             return await _taskContext.Tasks
                 .Include(t => t.Category)
@@ -86,6 +90,9 @@ namespace TaskManager.Services
                 throw new ArgumentException("Priority not found");
 
             await _taskContext.SaveChangesAsync();
+
+            _logger.LogInformation("User {userId} edited task {taskId}", userId, task.Id);
+
             return task;
         }
 
@@ -100,6 +107,8 @@ namespace TaskManager.Services
             task!.StatusId = statusId;
 
             await _taskContext.SaveChangesAsync();
+
+            _logger.LogInformation("User {userId} changed task {taskId} status to {statusId}", userId, taskId, statusId);
 
             return task;
         }
@@ -140,6 +149,8 @@ namespace TaskManager.Services
 
             if (task is null)
                 throw new ArgumentException("Task not found or access denied");
+
+            _logger.LogInformation("User {userId} deleted task {taskId}", userId, task.Id);
 
             _taskContext.Tasks.Remove(task);
             await _taskContext.SaveChangesAsync();

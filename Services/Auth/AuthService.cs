@@ -10,15 +10,18 @@ namespace TaskManager.Services.Auth
         private readonly IJwtService _jwtService;
         private readonly IPasswordHasher _passwordHasher;
         private readonly AuthDbContext _context;
+        private readonly ILogger<AuthService> _logger;
 
         public AuthService(
             IJwtService jwtService,
             IPasswordHasher passwordHasher,
-            AuthDbContext context)
+            AuthDbContext context,
+            ILogger<AuthService> logger)
         {
             _jwtService = jwtService;
             _passwordHasher = passwordHasher;
             _context = context;
+            _logger = logger;
         }
 
         public async Task<AuthResponse> Register(RegisterModel model)
@@ -52,6 +55,7 @@ namespace TaskManager.Services.Auth
                 .Include(x => x.Role)
                 .FirstOrDefault(x => x.Id == user.Id)!;
 
+
             var accessToken = _jwtService.GenerateAccessToken(user);
             var refreshToken = _jwtService.GenerateRefreshToken();
 
@@ -71,6 +75,8 @@ namespace TaskManager.Services.Auth
                 RefreshToken = refreshToken
             };
 
+            _logger.LogInformation("User {userid} registered", user.Id);
+
             return auth;
         }
 
@@ -81,12 +87,18 @@ namespace TaskManager.Services.Auth
                 .FirstOrDefaultAsync(x => x.Email == model.Email);
 
             if (user is null)
+            {
+                _logger.LogWarning("Failed login attempt: user with email {Email} not found", model.Email);
                 throw new ArgumentException("No user found with this email");
+            }    
 
             var verify = _passwordHasher.VerifyPassword(model.Password, user.PasswordHash);
 
             if (!verify)
+            {
+                _logger.LogWarning("Failed login attempt: invalid password for user {userId}", user.Id);
                 throw new ArgumentException("Invalid password");
+            }
 
             var aсcessToken = _jwtService.GenerateAccessToken(user);
             var refreshToken = _jwtService.GenerateRefreshToken();
@@ -107,6 +119,8 @@ namespace TaskManager.Services.Auth
             _context.RefreshTokens.Add(rt);
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation("User {userId} logged in", user.Id);
+
             return auth;
         }
 
@@ -115,12 +129,17 @@ namespace TaskManager.Services.Auth
             var user = await _context.Users.FindAsync(userId);
 
             if (user is null)
+            {
+                _logger.LogWarning("Logout failed: user {userId} not found", userId);
                 throw new ArgumentException("Invalid user");
+            }
 
             var refreshTokens = await _context.RefreshTokens.Where(x => x.UserId == userId).ToListAsync();
 
             _context.RefreshTokens.RemoveRange(refreshTokens);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation("User {userId} logged out", userId);
         }
 
         public async Task<AuthResponse> Refresh(string refreshToken)
@@ -128,17 +147,26 @@ namespace TaskManager.Services.Auth
             var existedRefreshToken = await _context.RefreshTokens.FirstOrDefaultAsync(x => x.Token == refreshToken);
 
             if (existedRefreshToken is null)
+            {
+                _logger.LogWarning("Failed refresh attempt: invalid refresh token");
                 throw new ArgumentException("Invalid refresh token");
+            }    
 
             if (existedRefreshToken.ExpiresAt < DateTime.UtcNow)
+            {
+                _logger.LogWarning("Failed refresh attempt: refresh token expired");
                 throw new ArgumentException("Refresh token expired");
+            }
 
             var existedUser = await _context.Users
                 .Include(x => x.Role)
                 .FirstOrDefaultAsync(x => x.Id == existedRefreshToken.UserId);
 
             if (existedUser is null)
+            {
+                _logger.LogWarning("Failed refresh attempt: invalid user");
                 throw new ArgumentException("Invalid user");
+            }    
 
             _context.RefreshTokens.Remove(existedRefreshToken);
             await _context.SaveChangesAsync();
@@ -158,6 +186,8 @@ namespace TaskManager.Services.Auth
 
             _context.RefreshTokens.Add(newRefreshToken);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation("User {userId} refreshed tokens", existedUser.Id);
 
             return auth;
         }
