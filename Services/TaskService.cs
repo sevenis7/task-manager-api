@@ -68,8 +68,8 @@ namespace TaskManager.Services
         {
             var task = await GetByIdAsync(id, userId);
 
-            task!.Name = model.Name;
-            task.Description = model.Description;
+            task!.Name = model.Name!;
+            task.Description = model.Description!;
             task.DueDate = model.DueDate;
 
             if (model.CategoryId.HasValue)
@@ -168,8 +168,8 @@ namespace TaskManager.Services
         private TaskItem MapCreateModelToEntity(CreateTaskModel source)
             => new()
             {
-                Name = source.Name,
-                Description = source.Description,
+                Name = source.Name!,
+                Description = source.Description!,
                 DueDate = source.DueDate,
                 CategoryId = source.CategoryId,
                 PriorityId = source.PriorityId

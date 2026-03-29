@@ -1,11 +1,9 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TaskManager.Models.Auth
+﻿namespace TaskManager.Models.Auth
 {
     public class LoginModel
     {
-        public string Email { get; set; } = string.Empty;
+        public string? Email { get; set; }
 
-        public string Password { get; set; } = string.Empty;
+        public string? Password { get; set; }
     }
 }

@@ -9,16 +9,16 @@ namespace TaskManager.Validators
         {
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Name is required")
-                .MaximumLength(100).WithMessage("Name must not exceed 100 characters")
-                .When(x => x.Name != null);
+                .MaximumLength(100).WithMessage("Name must not exceed 100 characters");
 
             RuleFor(x => x.Description)
-                .NotEmpty().WithMessage("Description is required")
-                .When(x => x.Description != null);
+                .NotEmpty().WithMessage("Description is required");
 
             RuleFor(x => x.PriorityId)
-                .GreaterThan(0)
-                .When(x => x.PriorityId != null);
+                .GreaterThan(0).WithMessage("Priority id is required");
+
+            RuleFor(x => x.CategoryId)
+                .GreaterThan(0).WithMessage("Category id is required");
         }
     }
 }

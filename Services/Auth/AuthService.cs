@@ -92,7 +92,7 @@ namespace TaskManager.Services.Auth
                 throw new ArgumentException("No user found with this email");
             }    
 
-            var verify = _passwordHasher.VerifyPassword(model.Password, user.PasswordHash);
+            var verify = _passwordHasher.VerifyPassword(model.Password!, user.PasswordHash);
 
             if (!verify)
             {
