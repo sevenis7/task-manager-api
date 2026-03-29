@@ -14,6 +14,8 @@ using TaskManager.Services.APIService;
 using TaskManager.Services.Auth;
 using TaskManager.Services.Mappers;
 using TaskManager.Services.Mappers.Interfaces;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 
 namespace TaskManager
 {
@@ -96,6 +98,8 @@ namespace TaskManager
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddTransient<IJwtService, JwtService>();
             builder.Services.AddTransient<IPasswordHasher, PasswordHasher>();
+            builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

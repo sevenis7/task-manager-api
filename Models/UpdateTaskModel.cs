@@ -4,11 +4,10 @@ namespace TaskManager.Models
 {
     public class UpdateTaskModel
     {
-        [Required(ErrorMessage = "Name is requeired")]
-        public required string Name { get; set; }
 
-        [Required(ErrorMessage = "Description is requeired")]
-        public required string Description { get; set; }
+        public string Name { get; set; } = string.Empty;
+
+        public string Description { get; set; } = string.Empty;
 
         public DateTime? DueDate { get; set; }
 
