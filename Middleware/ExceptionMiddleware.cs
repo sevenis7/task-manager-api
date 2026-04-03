@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Text.Json;
+using TaskManager.Exceptions;
 
 namespace TaskManager.Middleware
 {
@@ -32,6 +33,9 @@ namespace TaskManager.Middleware
             var statusCode = exception switch
             {
                 ArgumentException => HttpStatusCode.BadRequest,
+                NotFoundException => HttpStatusCode.NotFound,
+                ConflictException => HttpStatusCode.Conflict,
+                UnauthorizedException => HttpStatusCode.Unauthorized,
                 _ => HttpStatusCode.InternalServerError
             };
 

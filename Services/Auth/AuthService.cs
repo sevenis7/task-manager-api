@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using TaskManager.Data;
 using TaskManager.Entities;
+using TaskManager.Exceptions;
 using TaskManager.Models.Auth;
 
 namespace TaskManager.Services.Auth
@@ -30,11 +31,11 @@ namespace TaskManager.Services.Auth
             var emailCheck = await _context.Users.AnyAsync(x => x.Email == model.Email);
 
             if (userNameCheck && emailCheck)
-                throw new ArgumentException("User with this username and email already exists");
+                throw new ConflictException("User with this username and email already exists");
             if (emailCheck)
-                throw new ArgumentException("User with this email already exists");
+                throw new ConflictException("User with this email already exists");
             if (userNameCheck)
-                throw new ArgumentException("User with this username already exists");
+                throw new ConflictException("User with this username already exists");
 
             var passwordHash = _passwordHasher.HashPassword(model.Password);
 
@@ -89,7 +90,7 @@ namespace TaskManager.Services.Auth
             if (user is null)
             {
                 _logger.LogWarning("Failed login attempt: user with email {Email} not found", model.Email);
-                throw new ArgumentException("No user found with this email");
+                throw new UnauthorizedException("No user found with this email");
             }    
 
             var verify = _passwordHasher.VerifyPassword(model.Password!, user.PasswordHash);
@@ -97,7 +98,7 @@ namespace TaskManager.Services.Auth
             if (!verify)
             {
                 _logger.LogWarning("Failed login attempt: invalid password for user {userId}", user.Id);
-                throw new ArgumentException("Invalid password");
+                throw new UnauthorizedException("Invalid password");
             }
 
             var aсcessToken = _jwtService.GenerateAccessToken(user);
@@ -131,7 +132,7 @@ namespace TaskManager.Services.Auth
             if (user is null)
             {
                 _logger.LogWarning("Logout failed: user {userId} not found", userId);
-                throw new ArgumentException("Invalid user");
+                throw new UnauthorizedException("Invalid user");
             }
 
             var refreshTokens = await _context.RefreshTokens.Where(x => x.UserId == userId).ToListAsync();

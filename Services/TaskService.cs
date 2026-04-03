@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using TaskManager.Data;
 using TaskManager.Entities;
+using TaskManager.Exceptions;
 using TaskManager.Models;
 
 namespace TaskManager.Services
@@ -59,7 +61,7 @@ namespace TaskManager.Services
                 .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId);
 
             if (task is null)
-                throw new ArgumentException("Task not found or access denied");
+                throw new NotFoundException("Task not found or access denied");
 
             return task;
         }
