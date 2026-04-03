@@ -15,10 +15,13 @@ namespace TaskManager.Validators
                 .NotEmpty().WithMessage("Description is required");
 
             RuleFor(x => x.PriorityId)
-                .GreaterThan(0).WithMessage("Priority id is required");
+                .GreaterThan(0)
+                .WithMessage("Selected priority is invalid");
 
             RuleFor(x => x.CategoryId)
-                .GreaterThan(0).WithMessage("Category id is required");
+                .GreaterThan(0)
+                .When(x => x.CategoryId.HasValue)
+                .WithMessage("Selected category is invalid");
         }
     }
 }
