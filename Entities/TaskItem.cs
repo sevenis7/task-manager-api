@@ -20,7 +20,7 @@
 
         public StatusItem Status { get; set; } = null!;
 
-        public int? PriorityId { get; set; }
+        public int PriorityId { get; set; }
 
         public PriorityItem Priority { get; set; } = null!;
 
