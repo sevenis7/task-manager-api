@@ -102,8 +102,8 @@ namespace TaskManager.Controllers
         /// <param name="id">ID изменяемой задачи</param>
         /// <param name="taskModel">Модель задачи UpdateTaskModel, принимаемая из тела запроса</param>
         /// <returns></returns>
-        [HttpPatch("{id}")]
-        public async Task<IActionResult> Patch(int id, [FromBody] UpdateTaskModel taskModel)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Edit(int id, [FromBody] UpdateTaskModel taskModel)
         {
             var userId = GetUserId();
 
