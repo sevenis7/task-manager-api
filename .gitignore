@@ -13,14 +13,3 @@ obj/
 **/obj/
 
 **/.vs/
-/.vs/TaskManager/FileContentIndex
-
-/TaskManager/bin/Debug/net9.0
-
-/TaskManager/obj
-
-/TaskManager.Tests/bin/Debug/net9.0
-
-/TaskManager.Tests/obj/Debug/net9.0
-
-/TaskManager.Tests/obj
