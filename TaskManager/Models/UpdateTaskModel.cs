@@ -1,18 +1,15 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace TaskManager.Models
+﻿namespace TaskManager.Models
 {
     public class UpdateTaskModel
     {
+        public string Name { get; set; } = string.Empty;
 
-        public string? Name { get; set; }
-
-        public string? Description { get; set; }
+        public string Description { get; set; } = string.Empty;
 
         public DateTime? DueDate { get; set; }
 
         public int? CategoryId { get; set; }
 
-        public int? PriorityId { get; set; }
+        public int PriorityId { get; set; }
     }
 }
