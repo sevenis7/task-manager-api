@@ -8,35 +8,35 @@ namespace TaskManager.Tests.Validators
     {
         private readonly CreateTaskModelValidator _validator = new();
 
-        public static IEnumerable<object[]> NameTestData()
+        public static IEnumerable<object?[]> NameTestData()
         {
-            yield return new object[] { "", "Name is required" };
-            yield return new object[] { "         ", "Name is required" };
-            yield return new object[] { "Valid Name", null };
-            yield return new object[] { new string('A', 101), "Name must not exceed 100 characters" };
+            yield return new object?[] { "", "Name is required" };
+            yield return new object?[] { "         ", "Name is required" };
+            yield return new object?[] { "Valid Name", null };
+            yield return new object?[] { new string('A', 101), "Name must not exceed 100 characters" };
         }
 
-        public static IEnumerable<object[]> DescriptionTestData()
+        public static IEnumerable<object?[]> DescriptionTestData()
         {
-            yield return new object[] { "", "Description is required" };
-            yield return new object[] { "             ", "Description is required" };
-            yield return new object[] { "Valid description", null };
+            yield return new object?[] { "", "Description is required" };
+            yield return new object?[] { "             ", "Description is required" };
+            yield return new object?[] { "Valid description", null };
         }
 
-        public static IEnumerable<object[]> PriorityIdTestData()
+        public static IEnumerable<object?[]> PriorityIdTestData()
         {
-            yield return new object[] { 0, "Selected priority is invalid" };
-            yield return new object[] { 1, null };
-            yield return new object[] { -1, "Selected priority is invalid" };
-            yield return new object[] { null, "Selected priority is invalid" };
+            yield return new object?[] { 0, "Selected priority is invalid" };
+            yield return new object?[] { 1, null };
+            yield return new object?[] { -1, "Selected priority is invalid" };
+            yield return new object?[] { null, "Selected priority is invalid" };
         }
 
-        public static IEnumerable<object[]> CategoryIdTestData()
+        public static IEnumerable<object?[]> CategoryIdTestData()
         {
-            yield return new object[] { 0, "Selected category is invalid" };
-            yield return new object[] { 1, null };
-            yield return new object[] { -1, "Selected category is invalid" };
-            yield return new object[] { null, null };
+            yield return new object?[] { 0, "Selected category is invalid" };
+            yield return new object?[] { 1, null };
+            yield return new object?[] { -1, "Selected category is invalid" };
+            yield return new object?[] { null, null };
         }
 
         [Theory]
